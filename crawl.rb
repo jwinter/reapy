@@ -10,14 +10,14 @@ doc = Hpricot(open('http://news.ycombinator.com/'))
 news_links = doc.search('a[@href^=http]').reject {|x| x[:href].include?('ycombinator.com') || x[:href].include?('economist.com') }
 
 def strip_html(html)
-  return ''
   return Hpricot(html).inner_text.gsub(/\n|\t|\r/, " ").gsub(/  */, " ")
 end
 
 
 
-word_counts = File.open "wcs.txt", File::RDWR, File::APPEND
+word_counts = File.open "wcs.txt", File::RDWR | File::CREAT | File::APPEND
 storage_directory = './news-yc-corpus/'
+Dir.mkdir(storage_directory) unless File.directory? storage_directory
 
 EM.run {
   news_links.each {|nl| 
